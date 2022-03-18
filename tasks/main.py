@@ -28,9 +28,8 @@ def get_tasks_args(parser):
     """Provide extra arguments required for tasks."""
     group = parser.add_argument_group(title='tasks')
 
-    # group.add_argument('--task', type=str, required=True,
-    #                    help='Task name.')
-    group.add_argument('--eval-epochs', type=int, default=None)
+    group.add_argument('--task', type=str, required=True,
+                       help='Task name.')
     group.add_argument('--epochs', type=int, default=None,
                        help='Number of finetunning epochs. Zero results in '
                        'evaluation only.')
@@ -42,12 +41,8 @@ def get_tasks_args(parser):
     group.add_argument('--train-data', nargs='+', default=None,
                        help='Whitespace separated paths or corpora names '
                        'for training.')
-    group.add_argument('--labels-path', type=str, default=None,
-                       help='Labels paths for training and validation.')
     group.add_argument('--valid-data', nargs='*', default=None,
                        help='path(s) to the validation data.')
-    group.add_argument('--test-data', nargs='*', default=None,
-                       help='path(s) to the test data.')
     group.add_argument('--overlapping-eval', type=int, default=32,
                        help='Sliding window for overlapping evaluation.')
     group.add_argument('--strict-lambada', action='store_true',
@@ -66,29 +61,6 @@ def get_tasks_args(parser):
                         'logic type")
     group.add_argument('--faiss-topk-retrievals', type=int, default=100,
                        help='Number of blocks to use as top-k during retrieval')
-
-    # finetune for retriever
-    group.add_argument('--eval-micro-batch-size', type=int, default=None,
-                       help='Eval Batch size per model instance (local batch '
-                            'size). Global batch size is local batch size '
-                            'times data parallel size.')
-    group.add_argument('--train-with-neg', action='store_true',
-                       help='Whether to use negative examples during model '
-                        'training')
-    group.add_argument('--train-hard-neg', type=int, default=0,
-                       help='Number of hard negative exmaples to use during '
-                        'training')
-
-
-    # parameters for Av.rank validation method
-    # Following options/arguments have been taken directly from DPR codebase
-    group.add_argument('--val-av-rank-hard-neg', type=int, default=30,
-                        help='Av.rank validation: how many hard negatives to'
-                        ' take from each question pool')
-    group.add_argument('--val-av-rank-other-neg', type=int, default=30,
-                        help='Av.rank validation: how many other negatives to'
-                        ' take from each question pool')
-
 
     return parser
 
@@ -109,32 +81,8 @@ if __name__ == '__main__':
         from glue.finetune import main
     elif args.task in ['LAMBADA', 'WIKITEXT103']:
         from zeroshot_gpt.evaluate import main
-    elif args.task in ['ICT-ZEROSHOT-NQ', 'RETRIEVER-EVAL']:
+    elif args.task in ['ICT-ZEROSHOT-NQ']:
         from orqa.evaluate_orqa import main
-    elif args.task in ['RET-FINETUNE-NQ']:
-        from orqa.supervised.finetune import main
-    elif args.task in ['AFQMC']:
-        from afqmc.finetune import main
-    elif args.task in ['CSL']:
-        from csl.finetune import main
-    elif args.task in ['C3']:
-        from c3.finetune import main
-    elif args.task in ['BUSTM']:
-        from bustm.finetune import main
-    elif args.task in ['WSC']:
-        from wsc.finetune import main
-    elif args.task in ['OCNLI']:
-        from ocnli.finetune import main
-    elif args.task in ['TNEWS']:
-        from tnews.finetune import main
-    elif args.task in ['CSLDCP']:
-        from csldcp.finetune import main
-    elif args.task in ['EPRSTMT']:
-        from eprstmt.finetune import main
-    elif args.task in ['CHID']:
-        from chid.finetune import main
-    elif args.task in ['IFLYTEK']:
-        from iflytek.finetune import main
     else:
         raise NotImplementedError('Task {} is not implemented.'.format(
             args.task))
